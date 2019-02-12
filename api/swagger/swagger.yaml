@@ -13,6 +13,15 @@ produces:
 
 schemes:
   - http
+  
+parameters:
+  usuario-id:
+    name: usuario_id
+    in: path
+    description: id do usuario
+    type: integer
+    format: int32
+    required: true
 
 paths:
 
@@ -38,7 +47,32 @@ paths:
         '400':
           description: Requisição Inválida (Bad Request)
         '500':
-          description: Erro Interno do Servidor (Internal Server Error)    
+          description: Erro Interno do Servidor (Internal Server Error)
+          
+  # ---
+  # Serviço responsável por atualizar um usuário.
+  # ---
+  /usuario/{usuario_id}:
+    x-swagger-router-controller: usuario
+    put:
+      tags:
+        - Atualizar
+      operationId: atualizar_usuario
+      parameters:
+        - $ref: "#/parameters/usuario-id"
+        - name: "body"
+          in: "body"
+          description: "Updated user object"
+          required: true
+          schema:
+            $ref: "#/definitions/usuario"
+      responses:
+        '201':
+          description: Criado (Created)
+        '400':
+          description: Requisição Inválida (Bad Request)
+        '500':
+          description: Erro Interno do Servidor (Internal Server Error)
 
   /docs:
     x-swagger-pipe: swagger_raw
