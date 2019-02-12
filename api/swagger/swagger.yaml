@@ -32,7 +32,8 @@ paths:
     x-swagger-router-controller: usuario
     post:
       tags:
-        - Usuário
+        - Usuario
+      summary: Cadastrar
       operationId: cadastrar_usuario
       parameters:
         - in: body
@@ -48,7 +49,26 @@ paths:
           description: Requisição Inválida (Bad Request)
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
-          
+      
+    # ---
+    # Serviço responsável por retornar dados de todos usuarios
+    # ---
+    get:
+      tags:
+        - Usuario
+      summary: Obter todos os cadastros
+      operationId: obter_todos
+      responses:
+        '201':
+          description: Criado (Created)
+          schema:
+            $ref: "#/definitions/usuario"
+        '400':
+          description: Requisição Inválida (Bad Request)
+        '500':
+          description: Erro Interno do Servidor (Internal Server Error)
+      
+      
   # ---
   # Serviço responsável por atualizar um usuário.
   # ---
@@ -56,7 +76,8 @@ paths:
     x-swagger-router-controller: usuario
     put:
       tags:
-        - Atualizar
+        - Usuario
+      summary: Atualizar dados
       operationId: atualizar_usuario
       parameters:
         - $ref: "#/parameters/usuario-id"
@@ -68,7 +89,27 @@ paths:
             $ref: "#/definitions/usuario"
       responses:
         '201':
-          description: Criado (Created)
+          description: Atualizado (Created)
+        '400':
+          description: Requisição Inválida (Bad Request)
+        '500':
+          description: Erro Interno do Servidor (Internal Server Error)
+          
+    # ---
+    # Serviço responsável por atualizar um usuário.
+    # ---
+    get:
+      tags:
+        - Usuario
+      summary: Obter dados
+      operationId: obter_usuario
+      parameters:
+        - $ref: "#/parameters/usuario-id"
+      responses:
+        '201':
+          description: Sucesso ao retornar dados (Created)
+          schema:
+            $ref: "#/definitions/usuario"
         '400':
           description: Requisição Inválida (Bad Request)
         '500':
