@@ -60,7 +60,7 @@ paths:
       operationId: obter_todos
       responses:
         '201':
-          description: Criado (Created)
+          description: Feito (Created)
           schema:
             $ref: "#/definitions/usuario"
         '400':

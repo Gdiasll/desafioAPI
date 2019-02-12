@@ -73,5 +73,17 @@ async function obterUsuario(req, res) {
 
 // Funçao para obter todos usuarios
 async function obterTodos(req, res) {
-    // ------------//
+    try {
+        const client = new Client({ connectionString: urlConexao });
+        await client.connect();
+
+        const usuarios = await client.query('SELECT * FROM usuario')
+        await client.end()
+
+        res.status(201).send(usuarios.rows)
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json( { mensagem: err.toString() } );
+    }
 }
