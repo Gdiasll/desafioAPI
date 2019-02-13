@@ -24,7 +24,6 @@ parameters:
     required: true
 
 paths:
-
   # ---
   # Serviço responsável por cadastrar um novo usuário.
   # ---  
@@ -49,7 +48,6 @@ paths:
           description: Requisição Inválida (Bad Request)
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
-      
     # ---
     # Serviço responsável por retornar dados de todos usuarios
     # ---
@@ -60,15 +58,13 @@ paths:
       operationId: obter_todos
       responses:
         '201':
-          description: Feito (Created)
+          description: Criado (Created)
           schema:
             $ref: "#/definitions/usuario"
         '400':
           description: Requisição Inválida (Bad Request)
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
-      
-      
   # ---
   # Serviço responsável por atualizar um usuário.
   # ---
@@ -94,7 +90,6 @@ paths:
           description: Requisição Inválida (Bad Request)
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
-          
     # ---
     # Serviço responsável por atualizar um usuário.
     # ---
@@ -114,7 +109,52 @@ paths:
           description: Requisição Inválida (Bad Request)
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
-
+  # --
+  # Serviço responsavel por obter endereços de um usuario
+  # --
+  /usuario/{usuario_id}/endereco:
+    x-swagger-router-controller: endereco
+    get:
+      tags:
+        - Endereço
+      summary: Retorna endereços de um usuario
+      operationId: obter_endereco
+      parameters:
+        - $ref: "#/parameters/usuario-id"
+      responses:
+        '201':
+          description: Sucesso ao retornar dados (Created)
+          schema:
+            $ref: "#/definitions/enderecos"
+        '400':
+          description: Requisição Inválida (Bad Request)
+        '500':
+          description: Erro Interno do Servidor (Internal Server Error)
+  # --
+  # Serviço de cadastramento de endereço
+  # --
+  /endereco:
+    x-swagger-router-controller: endereco
+    post:
+      tags: 
+        - Endereço
+      summary: Cadastrar endereço
+      operationId: cadastrar_endereco
+      parameters:
+        - in: body
+          name: endereco
+          description: Modelo de Endereco
+          required: true
+          schema:
+            $ref: "#/definitions/endereco"        
+      responses:
+        '201':
+          description: Criado (Created)
+        '400':
+          description: Requisição Inválida (Bad Request)
+        '500':
+          description: Erro Interno do Servidor (Internal Server Error)
+      
   /docs:
     x-swagger-pipe: swagger_raw
     
@@ -133,3 +173,37 @@ definitions:
       - nome
       - data_nascimento
       - cpf
+  endereco:
+    type: object
+    properties:
+      rua: 
+        type: string
+      numero: 
+        type: integer
+        format: int64
+      complemento:
+        type: string
+      bairro:
+        type: string
+      usuario_id:
+        type: integer
+        format: int64
+    required:
+      - rua
+      - bairro
+      - usuario_id
+  enderecos:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int32
+      enderecos:
+        type: array
+        items:
+          type: object
+          properties:
+            endereco:
+              type: string
+            bairro:
+              type: string
