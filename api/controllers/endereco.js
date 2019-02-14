@@ -5,7 +5,8 @@ const urlConexao = require('../../config/pg_connection');
 
 module.exports = {
     cadastrar_endereco: cadastrarEndereco,
-    obter_endereco: obterEndereco
+    obter_endereco: obterEndereco,
+    obter_enderecos: obterEnderecos
 }
 // --
 // Funçao responsavel por cadastrar um endereço
@@ -61,10 +62,28 @@ async function obterEndereco(req, res) {
             )
         }
         res.status(201).json( saida );
-            
+
     } catch (err) {
         console.log(err);
         res.status(500).json( { mensagem: err.toString() } );
     }    
 }
 
+// --
+// Funçao resposavel por retornar dados de todos os endereços
+// --
+async function obterEnderecos(req, res) {
+    try {
+        const client = new Client({ connectionString: urlConexao });
+        await client.connect();
+
+        const enderecos = await client.query('SELECT * FROM endereco')
+        await client.end()
+
+        res.status(201).json(enderecos.rows)
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json( { mensagem: err.toString() } );
+    }
+}
