@@ -70,9 +70,11 @@ async function obterEndereco(req, res) {
 }
 
 // --
-// Funçao resposavel por retornar dados de todos os endereços
+// Funçao resposavel por retornar dados de todos os endereços do mesmo bairro
 // --
 async function obterEnderecos(req, res) {
+    const bairro = req.swagger.params.bairro.value
+
     try {
         const client = new Client({ connectionString: urlConexao });
         await client.connect();
@@ -80,7 +82,11 @@ async function obterEnderecos(req, res) {
         const enderecos = await client.query('SELECT * FROM endereco')
         await client.end()
 
-        res.status(201).json(enderecos.rows)
+        const saida = enderecos.rows.filter((endereco) => {
+            return endereco.bairro == bairro
+        })
+
+        res.status(201).json(saida)
 
     } catch (err) {
         console.log(err);

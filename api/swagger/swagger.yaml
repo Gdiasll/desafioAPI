@@ -22,6 +22,12 @@ parameters:
     type: integer
     format: int32
     required: true
+  bairro:
+    name: bairro
+    in: path
+    description: Filtrar por bairro
+    type: string
+    required: true
 
 paths:
   # ---
@@ -91,7 +97,7 @@ paths:
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
     # ---
-    # Serviço responsável por atualizar um usuário.
+    # Serviço responsável por obter dados de um usuário.
     # ---
     get:
       tags:
@@ -111,7 +117,7 @@ paths:
           description: Erro Interno do Servidor (Internal Server Error)
   
   /usuario/{usuario_id}/endereco:
-    x-swagger-router-controller: usuario
+    x-swagger-router-controller: endereco
     get:
       tags:
         - Endereço
@@ -154,14 +160,18 @@ paths:
         '500':
           description: Erro Interno do Servidor (Internal Server Error)
     
-    # --
-    # Serviço responsavel por retornar todos os endereços
-    # --
+  # --
+  # Serviço responsavel por retornar todos os endereços
+  # --
+  /endereco/{bairro}:
+    x-swagger-router-controller: endereco
     get:
       tags:
         - Endereço
-      summary: Retorna dados de todos endereços
+      summary: Retorna dados de todos endereços de um mesmo bairro.
       operationId: obter_enderecos
+      parameters:
+          - $ref: "#/parameters/bairro"
       responses:
         '201':
           description: Feito!
