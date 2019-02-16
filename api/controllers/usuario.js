@@ -1,7 +1,7 @@
 'use strict';
 
 const { Client } = require('pg');
-const urlConexao = require('../../config/pg_connection');
+const {usuario, endereco} = require('./../models');
 
 module.exports = {
     cadastrar_usuario: cadastrarUsuario,
@@ -17,11 +17,8 @@ async function cadastrarUsuario(req, res) {
 
     try {
         if(!validaCPF(cpf)) throw "CPF inválido"
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
-
-        await client.query('INSERT INTO usuario (nome, data_nascimento, cpf) VALUES ($1, $2, $3)', [nome, data_nascimento, cpf]);
-        await client.end();
+        
+        usuario.create({nome, data_nascimento, cpf});
         
         res.status(201).json( { mensagem: 'Usuário cadastrado com sucesso!' } );
     

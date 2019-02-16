@@ -2,6 +2,7 @@
 
 const { Client } = require('pg');
 const urlConexao = require('../../config/pg_connection');
+const {usuario, endereco} = require('./../models');
 
 module.exports = {
     cadastrar_endereco: cadastrarEndereco,
@@ -19,12 +20,8 @@ async function cadastrarEndereco(req, res) {
     const usuario_id = req.body.usuario_id;
 
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
-
-        await client.query('INSERT INTO endereco (rua, numero, complemento, bairro, usuario_id) VALUES ($1, $2, $3, $4, $5)', 
-            [rua, numero, complemento, bairro, usuario_id]);
-        await client.end();
+        
+        await endereco.create({rua:rua, numero:numero, complemento:complemento, bairro:bairro, usuario_id:usuario_id})
 
         res.status(201).json( { mensagem: 'Endereço cadastrado com sucesso!' } );
         
