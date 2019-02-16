@@ -1,9 +1,11 @@
+'use strict';
+
 module.exports = {
   development: {
-    username: "geone",
-    password: "geonedias",
-    database: "desafio",
-    host: "127.0.0.1",
+    username: 'geone',
+    password: 'geonedias',
+    database: 'desafio',
+    host:     'localhost',
     dialect: "postgres",
     define: {
         timestamps: false    
@@ -15,13 +17,21 @@ module.exports = {
     password: null,
     database: "database_test",
     host: "127.0.0.1",
-    dialect: "postgres"
+    dialect: "postgres",
+    define: {
+       timestamps: false    
+    },
+    operatorsAliases: false 
   },
   production: {
     username: "root",
     password: null,
     database: "database_production",
     host: "127.0.0.1",
-    dialect: "postgres"
+    dialect: "postgres",
+    define: {
+        timestamps: false    
+    },
+    operatorsAliases: false 
   }
 }

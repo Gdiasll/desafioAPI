@@ -1,8 +1,6 @@
 'use strict';
 
-const { Client } = require('pg');
-const urlConexao = require('../../config/pg_connection');
-const {usuario, endereco} = require('./../models');
+const {endereco} = require('./../models');
 
 module.exports = {
     cadastrar_endereco: cadastrarEndereco,
@@ -20,11 +18,9 @@ async function cadastrarEndereco(req, res) {
     const usuario_id = req.body.usuario_id;
 
     try {
-        
-        await endereco.create({rua:rua, numero:numero, complemento:complemento, bairro:bairro, usuario_id:usuario_id})
+        await endereco.create({rua, numero, complemento, bairro, usuario_id})
 
         res.status(201).json( { mensagem: 'Endereço cadastrado com sucesso!' } );
-        
     } catch (err) {
         console.log(err);
         res.status(500).json( { mensagem: err.toString() } );
@@ -32,19 +28,20 @@ async function cadastrarEndereco(req, res) {
 }
 
 // --
-// Função responsável por retornar endereços
+// Função responsável por retornar endereços de um usuario
 // --
 async function obterEndereco(req, res) {
     const usuario_id = req.swagger.params.usuario_id.value;
 
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
-
-        const enderecos = await client.query(`SELECT rua, numero, complemento, bairro FROM endereco WHERE usuario_id = ${usuario_id}`)
-        await client.end();
+        const enderecos = await endereco.findAll({
+            attributes: ['rua', 'numero', 'complemento', 'bairro'],
+            where: {
+                usuario_id: usuario_id
+            }
+        })
         
-        const total = enderecos.rows.length
+        const total = enderecos.length
         const saida = {
             total: total,
             enderecos: []
@@ -53,8 +50,8 @@ async function obterEndereco(req, res) {
         for(let i = 0; i < total; i++) {
             saida.enderecos.push(
                 {
-                    endereco: `${enderecos.rows[i].rua}, ${enderecos.rows[i].numero || 's/n'}, ${enderecos.rows[i].complemento || 's/complemento'}`,
-                    bairro: `${enderecos.rows[i].bairro}`
+                    endereco: `${enderecos[i].rua}, ${enderecos[i].numero || 's/n'}, ${enderecos[i].complemento || 's/complemento'}`,
+                    bairro: `${enderecos[i].bairro}`
                 }
             )
         }
@@ -73,13 +70,11 @@ async function obterEnderecos(req, res) {
     const bairro = req.swagger.params.bairro.value
 
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
+        const enderecos = await endereco.findAll({ 
+            attributes: ['rua', 'numero', 'complemento', 'bairro', 'usuario_id'] }
+        )
 
-        const enderecos = await client.query('SELECT * FROM endereco')
-        await client.end()
-
-        const saida = enderecos.rows.filter((endereco) => {
+        const saida = enderecos.filter((endereco) => {
             return endereco.bairro == bairro
         })
 

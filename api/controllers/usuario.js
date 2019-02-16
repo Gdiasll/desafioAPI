@@ -1,7 +1,6 @@
 'use strict';
 
-const { Client } = require('pg');
-const {usuario, endereco} = require('./../models');
+const {usuario} = require('./../models');
 
 module.exports = {
     cadastrar_usuario: cadastrarUsuario,
@@ -10,6 +9,7 @@ module.exports = {
     obter_todos: obterTodos
 };
 
+// Função responsavel por cadastrar usuario
 async function cadastrarUsuario(req, res) {
     const nome = req.body.nome.trim();
     const data_nascimento = req.body.data_nascimento;
@@ -18,13 +18,13 @@ async function cadastrarUsuario(req, res) {
     try {
         if(!validaCPF(cpf)) throw "CPF inválido"
         
-        usuario.create({nome, data_nascimento, cpf});
+        await usuario.create({nome, data_nascimento, cpf});
         
         res.status(201).json( { mensagem: 'Usuário cadastrado com sucesso!' } );
     
     } catch (err) {
         console.log(err);
-        if(err.code == 23505) res.status(400).json({ mensagem: 'CPF já cadastrado!' })
+        if(err.parent.code == 23505) res.status(400).json({ mensagem: 'CPF já cadastrado!' })
         res.status(500).json( { mensagem: err.toString() } );
     }
 }
@@ -36,14 +36,9 @@ async function atualizarUsuario(req, res) {
     const data_nascimento = req.body.data_nascimento;
 
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
-
-        await client.query('UPDATE usuario SET (nome, data_nascimento) = ($1, $2) WHERE id = ($3)', [nome, data_nascimento, id]);
-        await client.end();
+        await usuario.update({ nome, data_nascimento }, {where: { id: id }})
 
         res.status(201).json( { mensagem: 'Usuario atualizado com sucesso!' } );
-
     } catch (err) {
         console.log(err);
         res.status(500).json( { mensagem: err.toString() } );
@@ -55,18 +50,16 @@ async function obterUsuario(req, res) {
     const id_usuario = req.swagger.params.usuario_id.value;
 
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
-
-        let usuario = await client.query(`SELECT nome, data_nascimento, cpf FROM usuario WHERE id =${id_usuario}`)
-        await client.end();
-        usuario = usuario.rows[0]
-        
-        res.status(201).json( { nome: usuario.nome,
-            data_nascimento: usuario.data_nascimento,
-            cpf: mascaraCpf(usuario.cpf)
+        let pesquisa = await usuario.findOne({
+            where: {
+                id: id_usuario
+            }
         })
-        
+
+        res.status(201).json( { nome: pesquisa.nome,
+            data_nascimento: pesquisa.data_nascimento,
+            cpf: mascaraCpf(pesquisa.cpf)
+        })
     } catch (err) {
         console.log(err);
         res.status(500).json( { mensagem: err.toString() } );
@@ -76,25 +69,22 @@ async function obterUsuario(req, res) {
 // Funçao para obter todos usuarios
 async function obterTodos(req, res) {
     try {
-        const client = new Client({ connectionString: urlConexao });
-        await client.connect();
+        const pesquisa = await usuario.findAll()
 
-        const usuarios = await client.query('SELECT * FROM usuario')
-        await client.end()
-        const usuario = usuarios.rows
-        const saida = []
+        const usuarios = []
         
-        for(let i = 0; i < usuario.length; i++) {
-            saida.push({ nome: usuario[i].nome,
-                data_nascimento: usuario[i].data_nascimento,
-                cpf: mascaraCpf(usuario[i].cpf)
+        for(let i = 0; i < pesquisa.length; i++) {
+            usuarios.push({ id: pesquisa[i].id,
+                nome: pesquisa[i].nome,
+                data_nascimento: pesquisa[i].data_nascimento,
+                cpf: mascaraCpf(pesquisa[i].cpf)
             })
         } 
-        res.status(201).json({ saida })
+        res.status(201).json({ usuarios })
 
     } catch (err) {
         console.log(err);
-        return falçksdf
+        res.status(500).json({ mensagem: err.toString() })
     }
 }
 
