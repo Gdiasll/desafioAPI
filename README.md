@@ -3,8 +3,6 @@
 
 Seja bem vindo ao Desafio API Lemobs!
 
-Utilize o documento "Instruções do Desafio API Lemobs" para se guiar pelas tarefas a serem realizadas.
-
 ---
 
 ### Roteiro Rápido de Configuração Local
@@ -23,11 +21,16 @@ Utilize o documento "Instruções do Desafio API Lemobs" para se guiar pelas tar
 npm install
 npm install nodemon
 ```
+**6)** Migração do banco de dados: com o arquivo .env criado e devidamente editado, basta rodar o seguinte comando para realizar a migração:
 
-**8)** Executar o seguinte comando no terminal para iniciar a aplicação:
+```
+npx sequelize db:migrate
+```
+
+**7)** Executar o seguinte comando no terminal para iniciar a aplicação:
 
 ```
 npm start
 ```
 
-Acessar a aplicação no endereço e portas definidos no arquivo ".env". Exemplo: http://localhost:8001
+**8)** Acessar a aplicação no endereço e portas definidos no arquivo ".env". Exemplo: http://localhost:8001

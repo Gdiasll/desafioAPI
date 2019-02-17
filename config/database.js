@@ -1,22 +1,22 @@
-'use strict';
+require('dotenv').config()
 
 module.exports = {
   development: {
-    username: 'geone',
-    password: 'geonedias',
-    database: 'desafio',
-    host:     'localhost',
-    dialect: "postgres",
+    username: process.env.BD_USUARIO,
+    password: process.env.BD_SENHA,
+    database: process.env.BD_NOME,
+    host: process.env.BD_HOST,
+    dialect: 'postgres',
     define: {
         timestamps: false    
     },
     operatorsAliases: false 
   },
   test: {
-    username: "root",
-    password: null,
-    database: "database_test",
-    host: "127.0.0.1",
+    username: process.env.BD_USUARIO,
+    password: process.env.BD_SENHA,
+    database: process.env.BD_NOME,
+    host: process.env.BD_HOST,
     dialect: "postgres",
     define: {
        timestamps: false    
@@ -24,14 +24,14 @@ module.exports = {
     operatorsAliases: false 
   },
   production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
+    username: process.env.BD_USUARIO,
+    password: process.env.BD_SENHA,
+    database: process.env.BD_NOME,
+    host: process.env.BD_HOST,
     dialect: "postgres",
     define: {
         timestamps: false    
     },
-    operatorsAliases: false 
-  }
+    operatorsAliases: false
+  } 
 }
